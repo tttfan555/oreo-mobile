@@ -5,7 +5,7 @@ canvas.width = 800;
 canvas.height = 400;
 
 let score = 0;
-let gameSpeed = 5;
+let gameSpeed = 3;
 let gravity = 0.3;
 
 // 加载奥利奥图像
@@ -41,50 +41,10 @@ function drawOreo() {
     }
 }
 
-let frame = 0; // 用于追踪帧数
-
 function handleObstacles() {
-    // 设置初始延迟和障碍物间隔
-    let initialDelay = 100; // 游戏开始后100帧不生成障碍物
-    const minGap = 200;  // 最小间隔，可根据需要调整
-    const maxGap = 300;  // 最大间隔，同样可调整
-    let gap = Math.random() * (maxGap - minGap) + minGap; // 计算本次间隔
-
-    // 检查是否需要生成新障碍物
-    if (frame > initialDelay && (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - gap)) {
-        let obstacleHeight = Math.random() * 60 + 20;  // 随机高度
-        let obstacleWidth = 20;  // 障碍物的宽度
-        obstacles.push({
-            x: canvas.width,
-            width: obstacleWidth,
-            height: obstacleHeight
-        });
+    if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 400) {
+        obstacles.push({ x: canvas.width, width: 20, height: 50 });
     }
-
-    // 循环遍历每个障碍物并更新其位置
-    obstacles.forEach(function(obstacle, index) {
-        obstacle.x -= gameSpeed;
-        ctx.fillStyle = 'brown';
-        ctx.fillRect(obstacle.x, canvas.height - obstacle.height, obstacle.width, obstacle.height);
-
-        // 碰撞检测
-        if (oreo.x < obstacle.x + obstacle.width &&
-            oreo.x + oreo.width > obstacle.x &&
-            oreo.y < canvas.height &&
-            oreo.y + oreo.height > canvas.height - obstacle.height) {
-            // 游戏结束
-            obstacles = [];
-            score = 0;
-            alert('Game over! Try again.');
-        }
-    });
-
-    // 删除屏幕外的障碍物
-    obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
-    frame++; // 增加帧数
-}
-
-
 
     obstacles.forEach(function(obstacle, index) {
         obstacle.x -= gameSpeed;
