@@ -41,19 +41,15 @@ function drawOreo() {
     }
 }
 
-let frame = 0; // 用于追踪帧数
-
 function handleObstacles() {
-    // 设置初始延迟和障碍物间隔
-    let initialDelay = 100; // 游戏开始后100帧不生成障碍物
-    const minGap = 200;  // 最小间隔，可根据需要调整
-    const maxGap = 300;  // 最大间隔，同样可调整
-    let gap = Math.random() * (maxGap - minGap) + minGap; // 计算本次间隔
+    const minGap = 150;  // 竖屏模式下最小间隔
+    const maxGap = 250;  // 竖屏模式下最大间隔
+    const initialDelay = 100; // 游戏开始后的延迟帧数
+    let gap = Math.random() * (maxGap - minGap) + minGap; // 随机间隔
 
-    // 检查是否需要生成新障碍物
     if (frame > initialDelay && (obstacles.length === 0 || obstacles[obstacles.length - 1].x < canvas.width - gap)) {
         let obstacleHeight = Math.random() * 60 + 20;  // 随机高度
-        let obstacleWidth = 20;  // 障碍物的宽度
+        let obstacleWidth = 20;  // 障碍物宽度
         obstacles.push({
             x: canvas.width,
             width: obstacleWidth,
@@ -61,7 +57,6 @@ function handleObstacles() {
         });
     }
 
-    // 循环遍历每个障碍物并更新其位置
     obstacles.forEach(function(obstacle, index) {
         obstacle.x -= gameSpeed;
         ctx.fillStyle = 'brown';
@@ -79,10 +74,10 @@ function handleObstacles() {
         }
     });
 
-    // 删除屏幕外的障碍物
     obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > 0);
-    frame++; // 增加帧数
+    frame++;
 }
+
 
 
 
