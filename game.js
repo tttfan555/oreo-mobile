@@ -44,7 +44,7 @@ function drawOreo() {
 function handleObstacles() {
     if (obstacles.length === 0 || obstacles[obstacles.length - 1].x < 400) {
         obstacles.push({ x: canvas.width, width: 20, height: 50 });
-        const minGap = 200;
+        const minGap = 300;
     }
 
     obstacles.forEach(function(obstacle, index) {
