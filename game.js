@@ -5,8 +5,8 @@ canvas.width = 800;
 canvas.height = 400;
 
 let score = 0;
-let gameSpeed = 3;
-let gravity = 0.3;
+let gameSpeed = 5;
+let gravity = 0.1;
 
 // 加载奥利奥图像
 let oreoImage = new Image();
