@@ -5,15 +5,16 @@ canvas.width = 800;
 canvas.height = 400;
 
 let score = 0;
-let highScore = 0;
-let baseSpeed = 3;
-let acceleration = 0.001;
-let gameSpeed = baseSpeed;
+let baseSpeed = 3;   // 游戏开始的基础速度
+let acceleration = 0.001; // 每帧速度增加的量
+let gameSpeed = baseSpeed;  // 当前游戏速度，初始等于基础速度
 let gravity = 0.3;
 
+// 加载奥利奥图像
 let oreoImage = new Image();
 oreoImage.src = 'oreo.png';
 
+// 加载障碍物图像
 let obstacleImage = new Image();
 obstacleImage.src = 'obstacle.png';
 
@@ -32,7 +33,6 @@ let oreo = {
         }
     }
 };
-
 let obstacles = [];
 
 function drawOreo() {
@@ -48,7 +48,7 @@ function drawOreo() {
 }
 
 function handleObstacles() {
-    const minGap = 200 + 30 / gameSpeed;
+    const minGap = 200 + 30 / gameSpeed;  // 根据速度调整间隔
     const maxGap = 300 + 60 / gameSpeed;
     let gap = Math.random() * (maxGap - minGap) + minGap;
 
@@ -70,7 +70,10 @@ function handleObstacles() {
             oreo.x + oreo.width > obstacle.x &&
             oreo.y < canvas.height &&
             oreo.y + oreo.height > canvas.height - obstacle.height) {
-            handleGameOver();
+            obstacles = [];
+            score = 0;
+            alert('Game over! Try again.');
+            gameSpeed = baseSpeed;  // 重置速度
         }
     });
 
@@ -81,49 +84,17 @@ function handleScore() {
     score++;
     ctx.fillStyle = 'black';
     ctx.font = '20px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Score: ${score}`, canvas.width / 2, 30);
+    ctx.fillText(`Score: ${score}`, 700, 30);
 }
 
-function handleGameOver() {
-    setTimeout(() => {
-        if (score > highScore) {
-            highScore = score;
-            saveScore(highScore);
-        }
-        
-        alert(`Game over! Your score: ${score}`);
-        score = 0;
-        gameSpeed = baseSpeed;
-        obstacles = [];
-        showLeaderBoard();
-    }, 0);
-}
+function update() {
+    gameSpeed += acceleration;  // 每帧增加速度
 
-function showLeaderBoard() {
-    let scores = JSON.parse(localStorage.getItem('highScores')) || [];
-    let leaderBoard = document.getElementById('leaderBoard');
-    
-    leaderBoard.innerHTML = '<b>Leaderboard</b><br>';
-    scores.forEach((entry, index) => {
-        leaderBoard.innerHTML += `${index + 1}. ${entry.name} - ${entry.score}<br>`;
-    });
-}
-
-function saveScore(highScore) {
-    let username = "Player";
-    let scores = JSON.parse(localStorage.getItem('highScores')) || [];
-    
-    scores.push({ name: username, score: highScore });
-    scores.sort((a, b) => b.score - a.score);
-    scores = scores.slice(0, 5);
-    
-    localStorage.setItem('highScores', JSON.stringify(scores));
-    showLeaderBoard();
-}
-
-function initializeLeaderBoard() {
-    showLeaderBoard();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawOreo();
+    handleObstacles();
+    handleScore();
+    requestAnimationFrame(update);
 }
 
 window.addEventListener('keydown', function(e) {
@@ -132,29 +103,20 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-canvas.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    oreo.jump();
-}, false);
-
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.8;
+    canvas.height = window.innerHeight * 0.8;  // 使用屏幕的80%高度
     if (oreo.y + oreo.height > canvas.height) {
-        oreo.y = canvas.height - oreo.height;
+        oreo.y = canvas.height - oreo.height;  // 确保角色不会跑出画面底部
     }
 }
 
 window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-initializeLeaderBoard();
-update();
+resizeCanvas();  // 页面加载时调用
 
-function update() {
-    gameSpeed += acceleration;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawOreo();
-    handleObstacles();
-    handleScore();
-    requestAnimationFrame(update);
-}
+canvas.addEventListener('touchstart', function(e) {
+    e.preventDefault();  // 阻止触摸时屏幕的滚动等默认行为
+    oreo.jump();
+}, false);
+
+update();
